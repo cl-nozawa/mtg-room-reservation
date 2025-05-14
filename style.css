@@ -1,3 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #6366f1;
+    --primary-hover: #4f46e5;
+    --secondary-color: #10b981;
+    --secondary-hover: #059669;
+    --accent-color: #f43f5e;
+    --text-color: #334155;
+    --text-light: #64748b;
+    --bg-color: #f8fafc;
+    --bg-card: #ffffff;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --border-radius: 12px;
+    --transition: all 0.3s ease;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -5,66 +25,118 @@
 }
 
 body {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f5f5f5;
-    padding: 20px;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    padding: 30px 20px;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    background-color: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    background-color: var(--bg-card);
+    padding: 40px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
 }
 
 h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #2c3e50;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 2.5rem;
+    position: relative;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    display: inline-block;
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    border-radius: 2px;
+}
+
+.subtitle {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    font-weight: 300;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 h2 {
-    margin-bottom: 20px;
-    color: #3498db;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 1.5rem;
+}
+
+h2 i {
+    margin-right: 10px;
+    color: var(--primary-color);
 }
 
 /* 会議室画像スタイル */
 .room-images {
     display: flex;
-    justify-content: space-around;
-    margin-bottom: 40px;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 50px;
 }
 
 .room-card {
-    width: 45%;
-    border-radius: 8px;
+    flex: 1;
+    border-radius: var(--border-radius);
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
     cursor: pointer;
     position: relative;
+    transform: translateY(0);
+    background-color: var(--bg-card);
 }
 
 .room-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-lg);
 }
 
 .room-card.selected {
-    border: 4px solid #3498db;
-    box-shadow: 0 0 20px rgba(52, 152, 219, 0.6);
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+.room-image-container {
+    position: relative;
+    overflow: hidden;
 }
 
 .room-card img {
     width: 100%;
     height: 250px;
     object-fit: cover;
+    transition: var(--transition);
+}
+
+.room-card:hover img {
+    transform: scale(1.05);
+    filter: brightness(1.05);
 }
 
 .room-name {
@@ -72,96 +144,273 @@ h2 {
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
     color: white;
-    padding: 10px;
+    padding: 30px 15px 15px;
     text-align: center;
-    font-weight: bold;
+    font-weight: 500;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.room-info {
+    padding: 15px;
+    background-color: var(--bg-card);
+}
+
+.room-info p {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.room-info i {
+    width: 20px;
+    color: var(--primary-color);
+    margin-right: 5px;
+}
+
+/* セクションスタイル */
+.reservation-section {
+    margin-bottom: 40px;
 }
 
 /* フォームスタイル */
 .reservation-form {
-    background-color: #f9f9f9;
-    padding: 25px;
-    border-radius: 8px;
-    margin-bottom: 40px;
+    background-color: var(--bg-color);
+    padding: 35px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 label {
     display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+label i {
+    color: var(--primary-color);
+    margin-right: 5px;
+    width: 18px;
 }
 
 input, select {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
     font-size: 16px;
+    transition: var(--transition);
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
+    background-color: var(--bg-card);
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 .reserve-btn {
-    background-color: #2ecc71;
+    background-color: var(--secondary-color);
     color: white;
     border: none;
-    padding: 12px 20px;
-    font-size: 16px;
-    border-radius: 4px;
+    padding: 14px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: var(--transition);
     display: block;
     width: 100%;
-    font-weight: bold;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    box-shadow: var(--shadow-sm);
 }
 
 .reserve-btn:hover {
-    background-color: #27ae60;
+    background-color: var(--secondary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.reserve-btn:active {
+    transform: translateY(0);
+}
+
+.reserve-btn i {
+    margin-right: 8px;
 }
 
 /* 予約一覧のスタイル */
-.reservation-list {
-    background-color: #f9f9f9;
-    padding: 25px;
-    border-radius: 8px;
+.reservation-list-items {
+    background-color: var(--bg-color);
+    padding: 35px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.no-reservations {
+    color: var(--text-light);
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+}
+
+.no-reservations i {
+    margin-right: 8px;
+    color: var(--primary-color);
 }
 
 .download-btn {
-    background-color: #3498db;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 12px 20px;
-    font-size: 16px;
-    border-radius: 4px;
+    font-size: 0.95rem;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
-    margin-bottom: 20px;
-    font-weight: bold;
+    transition: var(--transition);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.download-btn::before {
+    content: '📥';
+    margin-right: 8px;
+    font-size: 1.1rem;
 }
 
 .download-btn:hover {
-    background-color: #2980b9;
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.download-btn:active {
+    transform: translateY(0);
 }
 
 .reservation-item {
-    background-color: white;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    border-left: 4px solid #3498db;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: var(--bg-card);
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-color);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.reservation-item:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateX(5px);
+}
+
+.reservation-item p {
+    margin-bottom: 8px;
+}
+
+.reservation-item p:last-child {
+    margin-bottom: 0;
 }
 
 .room-a {
-    border-left-color: #e74c3c;
+    border-left-color: var(--accent-color);
 }
 
 .room-b {
-    border-left-color: #2ecc71;
+    border-left-color: var(--secondary-color);
+}
+
+/* 通知スタイル */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: var(--bg-card);
+    color: var(--text-color);
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+    animation: slideIn 0.3s ease forwards;
+    max-width: 350px;
+}
+
+.notification.success {
+    border-left: 4px solid var(--secondary-color);
+}
+
+.notification.error {
+    border-left: 4px solid var(--accent-color);
+}
+
+.notification.info {
+    border-left: 4px solid var(--primary-color);
+}
+
+.notification i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.notification.success i {
+    color: var(--secondary-color);
+}
+
+.notification.error i {
+    color: var(--accent-color);
+}
+
+.notification.info i {
+    color: var(--primary-color);
+}
+
+.notification.hide {
+    animation: slideOut 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+/* フッター */
+footer {
+    margin-top: 50px;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
 }
 
 @media (max-width: 768px) {
@@ -173,4 +422,49 @@ input, select {
         width: 100%;
         margin-bottom: 20px;
     }
+    
+    .container {
+        padding: 30px 20px;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .download-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .notification {
+        left: 20px;
+        right: 20px;
+        max-width: unset;
+    }
+}
+
+/* アニメーション効果 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.reservation-item {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* ページロード時のアニメーション */
+.container {
+    animation: fadeIn 0.6s ease;
 } 

@@ -4,22 +4,22 @@ const STORAGE_KEY = 'roomReservations';
 // 予約データを管理するクラス
 class ReservationManager {
     constructor() {
-        this.reservations = this.loadReservations();
+        this.reservations = this.load_reservations();
     }
 
     // ローカルストレージから予約を読み込む
-    loadReservations() {
+    load_reservations() {
         const storedData = localStorage.getItem(STORAGE_KEY);
         return storedData ? JSON.parse(storedData) : [];
     }
 
     // ローカルストレージに予約を保存する
-    saveReservations() {
+    save_reservations() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(this.reservations));
     }
 
     // 予約を追加する
-    addReservation(room, startDateTime, endDateTime, reserverName) {
+    add_reservation(room, startDateTime, endDateTime, reserverName) {
         const newReservation = {
             id: Date.now(), // ユニークIDとして現在時刻のタイムスタンプを使用
             room,
@@ -30,17 +30,17 @@ class ReservationManager {
         };
 
         // 予約時間の重複チェック
-        if (this.hasTimeConflict(newReservation)) {
+        if (this.has_time_conflict(newReservation)) {
             return { success: false, message: '選択した時間帯は既に予約されています。' };
         }
 
         this.reservations.push(newReservation);
-        this.saveReservations();
+        this.save_reservations();
         return { success: true, reservation: newReservation };
     }
 
     // 予約時間が既存の予約と重複していないかチェック
-    hasTimeConflict(newReservation) {
+    has_time_conflict(newReservation) {
         const { room, startDateTime, endDateTime } = newReservation;
         const start = new Date(startDateTime);
         const end = new Date(endDateTime);
@@ -62,7 +62,7 @@ class ReservationManager {
     }
 
     // 予約をCSV形式に変換
-    generateCSV() {
+    generate_csv() {
         if (this.reservations.length === 0) {
             return null;
         }
@@ -74,10 +74,10 @@ class ReservationManager {
         const rows = this.reservations.map(reservation => {
             return [
                 `会議室${reservation.room}`,
-                this.formatDateTime(new Date(reservation.startDateTime)),
-                this.formatDateTime(new Date(reservation.endDateTime)),
+                this.format_date_time(new Date(reservation.startDateTime)),
+                this.format_date_time(new Date(reservation.endDateTime)),
                 reservation.reserverName,
-                this.formatDateTime(new Date(reservation.createdAt))
+                this.format_date_time(new Date(reservation.createdAt))
             ];
         });
 
@@ -91,7 +91,7 @@ class ReservationManager {
     }
 
     // 日時のフォーマット
-    formatDateTime(date) {
+    format_date_time(date) {
         return date.toLocaleString('ja-JP', {
             year: 'numeric',
             month: '2-digit',
@@ -102,20 +102,20 @@ class ReservationManager {
     }
 
     // 全ての予約を取得
-    getAllReservations() {
+    get_all_reservations() {
         return this.reservations;
     }
 }
 
 // 予約一覧表示を更新
-function updateReservationList(manager) {
+function update_reservation_list(manager) {
     const container = document.getElementById('reservationListContainer');
     container.innerHTML = '';
 
-    const reservations = manager.getAllReservations();
+    const reservations = manager.get_all_reservations();
     
     if (reservations.length === 0) {
-        container.innerHTML = '<p>予約はまだありません。</p>';
+        container.innerHTML = '<p class="no-reservations"><i class="fas fa-info-circle"></i> 予約はまだありません。</p>';
         return;
     }
 
@@ -132,10 +132,13 @@ function updateReservationList(manager) {
         const start = new Date(reservation.startDateTime);
         const end = new Date(reservation.endDateTime);
         
+        // 会議室のアイコンを設定
+        const roomIcon = reservation.room === 'A' ? 'fa-tv' : 'fa-wifi';
+        
         item.innerHTML = `
-            <p><strong>会議室:</strong> 会議室${reservation.room}</p>
-            <p><strong>日時:</strong> ${manager.formatDateTime(start)} 〜 ${manager.formatDateTime(end)}</p>
-            <p><strong>予約者:</strong> ${reservation.reserverName}</p>
+            <p><i class="fas fa-building"></i> <strong>会議室${reservation.room}</strong></p>
+            <p><i class="fas fa-clock"></i> ${manager.format_date_time(start)} 〜 ${manager.format_date_time(end)}</p>
+            <p><i class="fas fa-user"></i> ${reservation.reserverName}</p>
         `;
         
         container.appendChild(item);
@@ -143,11 +146,11 @@ function updateReservationList(manager) {
 }
 
 // CSVファイルとしてダウンロード
-function downloadCSV(manager) {
-    const csvContent = manager.generateCSV();
+function download_csv(manager) {
+    const csvContent = manager.generate_csv();
     
     if (!csvContent) {
-        alert('ダウンロードできる予約データがありません。');
+        show_notification('ダウンロードできる予約データがありません。', 'error');
         return;
     }
     
@@ -162,6 +165,37 @@ function downloadCSV(manager) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    show_notification('CSVファイルのダウンロードが完了しました。', 'success');
+}
+
+// 通知を表示する関数
+function show_notification(message, type = 'info') {
+    // 既存の通知を削除
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // 新しい通知を作成
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    
+    // タイプに応じたアイコンを設定
+    let icon = 'fa-info-circle';
+    if (type === 'success') icon = 'fa-check-circle';
+    if (type === 'error') icon = 'fa-exclamation-circle';
+    
+    notification.innerHTML = `<i class="fas ${icon}"></i> ${message}`;
+    
+    // bodyの先頭に追加
+    document.body.insertBefore(notification, document.body.firstChild);
+    
+    // 3秒後に非表示
+    setTimeout(() => {
+        notification.classList.add('hide');
+        setTimeout(() => notification.remove(), 500);
+    }, 3000);
 }
 
 // DOMの準備ができたら実行
@@ -186,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
     endDateTimeInput.value = end.toISOString().slice(0, 16);
 
     // 予約一覧を表示
-    updateReservationList(reservationManager);
+    update_reservation_list(reservationManager);
 
     // 会議室カードのクリックイベント
     roomCards.forEach(card => {
@@ -220,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 入力チェック
         if (!room) {
-            alert('会議室を選択してください。');
+            show_notification('会議室を選択してください。', 'error');
             return;
         }
         
@@ -228,15 +262,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const end = new Date(endDateTime);
         
         if (start >= end) {
-            alert('終了時間は開始時間よりも後に設定してください。');
+            show_notification('終了時間は開始時間よりも後に設定してください。', 'error');
             return;
         }
 
         // 予約を追加
-        const result = reservationManager.addReservation(room, startDateTime, endDateTime, reserverName);
+        const result = reservationManager.add_reservation(room, startDateTime, endDateTime, reserverName);
         
         if (result.success) {
-            alert('予約が完了しました。');
+            show_notification('予約が完了しました！', 'success');
             reservationForm.reset();
             
             // 現在時刻から30分後を開始時間、1時間半後を終了時間に再設定
@@ -250,14 +284,14 @@ document.addEventListener('DOMContentLoaded', () => {
             endDateTimeInput.value = end.toISOString().slice(0, 16);
             
             // 予約一覧を更新
-            updateReservationList(reservationManager);
+            update_reservation_list(reservationManager);
         } else {
-            alert(result.message);
+            show_notification(result.message, 'error');
         }
     });
 
     // CSVダウンロードボタンのクリックイベント
     downloadButton.addEventListener('click', () => {
-        downloadCSV(reservationManager);
+        download_csv(reservationManager);
     });
 }); 
