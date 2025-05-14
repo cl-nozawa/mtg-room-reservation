@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会議室予約システム</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>会議室予約システム</h1>
+        
+        <div class="room-images">
+            <div class="room-card" data-room="A">
+                <img src="https://www.creationline.com/tech-blog/cms_x3GWkuX/wp-content/uploads/2024/04/main1.webp" alt="会議室A">
+                <div class="room-name">会議室A</div>
+            </div>
+            <div class="room-card" data-room="B">
+                <img src="https://www.creationline.com/tech-blog/cms_x3GWkuX/wp-content/uploads/2024/04/main4.webp" alt="会議室B">
+                <div class="room-name">会議室B</div>
+            </div>
+        </div>
+        
+        <div class="reservation-form">
+            <h2>予約フォーム</h2>
+            <form id="reservationForm">
+                <div class="form-group">
+                    <label for="roomSelect">会議室：</label>
+                    <select id="roomSelect" name="room" required>
+                        <option value="">選択してください</option>
+                        <option value="A">会議室A</option>
+                        <option value="B">会議室B</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="startDateTime">利用開始日時：</label>
+                    <input type="datetime-local" id="startDateTime" name="startDateTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="endDateTime">利用終了日時：</label>
+                    <input type="datetime-local" id="endDateTime" name="endDateTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="reserverName">予約者名：</label>
+                    <input type="text" id="reserverName" name="reserverName" required>
+                </div>
+                <button type="submit" class="reserve-btn">予約する</button>
+            </form>
+        </div>
+        
+        <div class="reservation-list">
+            <h2>予約一覧</h2>
+            <button id="downloadCSV" class="download-btn">予約データをCSVでダウンロード</button>
+            <div id="reservationListContainer"></div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 
