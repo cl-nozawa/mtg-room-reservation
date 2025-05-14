@@ -107,6 +107,56 @@ class ReservationManager {
     }
 }
 
+// 選択肢を生成する関数
+function generate_date_options(selectElement, days = 30) {
+    // 現在の日付
+    const today = new Date();
+    
+    // 今日から指定日数分の選択肢を生成
+    for (let i = 0; i < days; i++) {
+        const date = new Date(today);
+        date.setDate(date.getDate() + i);
+        
+        const value = date.toISOString().split('T')[0]; // YYYY-MM-DD形式
+        
+        // 表示用の日付文字列
+        const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const weekday = weekdays[date.getDay()];
+        const label = `${month}月${day}日（${weekday}）`;
+        
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = label;
+        
+        // 今日を選択状態にする
+        if (i === 0) {
+            option.selected = true;
+        }
+        
+        selectElement.appendChild(option);
+    }
+}
+
+// 30分単位の時間選択肢を生成する関数
+function generate_time_options(selectElement, startHour = 9, endHour = 21) {
+    for (let hour = startHour; hour <= endHour; hour++) {
+        for (let minute of [0, 30]) {
+            const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+            const option = document.createElement('option');
+            option.value = time;
+            option.textContent = time;
+            selectElement.appendChild(option);
+        }
+    }
+}
+
+// 日付と時間から完全な日時文字列を作成
+function create_datetime_string(dateStr, timeStr) {
+    return `${dateStr}T${timeStr}:00`;
+}
+
 // 予約一覧表示を更新
 function update_reservation_list(manager) {
     const container = document.getElementById('reservationListContainer');
@@ -205,19 +255,75 @@ document.addEventListener('DOMContentLoaded', () => {
     const roomSelect = document.getElementById('roomSelect');
     const reservationForm = document.getElementById('reservationForm');
     const downloadButton = document.getElementById('downloadCSV');
-    const startDateTimeInput = document.getElementById('startDateTime');
-    const endDateTimeInput = document.getElementById('endDateTime');
-
-    // 現在時刻から30分後を開始時間、1時間半後を終了時間の初期値にする
-    const now = new Date();
-    const start = new Date(now);
-    start.setMinutes(Math.ceil(now.getMinutes() / 30) * 30); // 30分単位に切り上げ
-    const end = new Date(start);
-    end.setHours(end.getHours() + 1);
     
-    // フォームに初期値をセット
-    startDateTimeInput.value = start.toISOString().slice(0, 16);
-    endDateTimeInput.value = end.toISOString().slice(0, 16);
+    // 日付と時間の選択要素
+    const startDateSelect = document.getElementById('startDateSelect');
+    const startTimeSelect = document.getElementById('startTimeSelect');
+    const endDateSelect = document.getElementById('endDateSelect');
+    const endTimeSelect = document.getElementById('endTimeSelect');
+
+    // 日付選択肢を生成
+    generate_date_options(startDateSelect);
+    generate_date_options(endDateSelect);
+    
+    // 時間選択肢を生成（営業時間を9:00～21:00と仮定）
+    generate_time_options(startTimeSelect);
+    generate_time_options(endTimeSelect);
+    
+    // デフォルト値の設定
+    const now = new Date();
+    const roundedMinutes = Math.ceil(now.getMinutes() / 30) * 30;
+    const startTime = new Date(now);
+    
+    if (roundedMinutes === 60) {
+        startTime.setHours(now.getHours() + 1);
+        startTime.setMinutes(0);
+    } else {
+        startTime.setMinutes(roundedMinutes);
+    }
+    
+    // 開始時間のデフォルト値を設定
+    const defaultStartHour = startTime.getHours().toString().padStart(2, '0');
+    const defaultStartMinute = startTime.getMinutes().toString().padStart(2, '0');
+    const defaultStartTimeStr = `${defaultStartHour}:${defaultStartMinute}`;
+    
+    // 終了時間は開始時間の1時間後を設定
+    const endTime = new Date(startTime);
+    endTime.setHours(endTime.getHours() + 1);
+    const defaultEndHour = endTime.getHours().toString().padStart(2, '0');
+    const defaultEndMinute = endTime.getMinutes().toString().padStart(2, '0');
+    const defaultEndTimeStr = `${defaultEndHour}:${defaultEndMinute}`;
+    
+    // 選択肢がロードされた後にデフォルト値を設定
+    setTimeout(() => {
+        // 最も近い選択肢を選択
+        set_closest_time_option(startTimeSelect, defaultStartTimeStr);
+        set_closest_time_option(endTimeSelect, defaultEndTimeStr);
+    }, 0);
+    
+    // 最も近い時間オプションを選択
+    function set_closest_time_option(selectElement, timeStr) {
+        const options = Array.from(selectElement.options);
+        let bestMatchIndex = 0;
+        let minDiff = Infinity;
+        
+        // 時間文字列を分単位に変換
+        const targetMinutes = parseInt(timeStr.split(':')[0]) * 60 + parseInt(timeStr.split(':')[1]);
+        
+        options.forEach((option, index) => {
+            if (option.value) {
+                const optionMinutes = parseInt(option.value.split(':')[0]) * 60 + parseInt(option.value.split(':')[1]);
+                const diff = Math.abs(optionMinutes - targetMinutes);
+                
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    bestMatchIndex = index;
+                }
+            }
+        });
+        
+        selectElement.selectedIndex = bestMatchIndex;
+    }
 
     // 予約一覧を表示
     update_reservation_list(reservationManager);
@@ -248,9 +354,15 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         
         const room = roomSelect.value;
-        const startDateTime = startDateTimeInput.value;
-        const endDateTime = endDateTimeInput.value;
+        const startDate = startDateSelect.value;
+        const startTime = startTimeSelect.value;
+        const endDate = endDateSelect.value;
+        const endTime = endTimeSelect.value;
         const reserverName = document.getElementById('reserverName').value;
+        
+        // 日付と時間を組み合わせてISO文字列に変換
+        const startDateTime = create_datetime_string(startDate, startTime);
+        const endDateTime = create_datetime_string(endDate, endTime);
         
         // 入力チェック
         if (!room) {
@@ -271,17 +383,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (result.success) {
             show_notification('予約が完了しました！', 'success');
-            reservationForm.reset();
             
-            // 現在時刻から30分後を開始時間、1時間半後を終了時間に再設定
-            const now = new Date();
-            const start = new Date(now);
-            start.setMinutes(Math.ceil(now.getMinutes() / 30) * 30);
-            const end = new Date(start);
-            end.setHours(end.getHours() + 1);
-            
-            startDateTimeInput.value = start.toISOString().slice(0, 16);
-            endDateTimeInput.value = end.toISOString().slice(0, 16);
+            // フォームをリセット（セレクトは初期値を保持）
+            document.getElementById('reserverName').value = '';
+            roomSelect.value = '';
+            roomCards.forEach(c => c.classList.remove('selected'));
             
             // 予約一覧を更新
             update_reservation_list(reservationManager);

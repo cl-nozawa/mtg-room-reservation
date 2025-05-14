@@ -229,6 +229,20 @@ input:focus, select:focus {
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
+/* 日時選択用スタイル */
+.datetime-select {
+    display: flex;
+    gap: 15px;
+}
+
+.date-select {
+    flex: 3;
+}
+
+.time-select {
+    flex: 2;
+}
+
 .reserve-btn {
     background-color: var(--secondary-color);
     color: white;
@@ -434,6 +448,11 @@ footer {
     .form-row {
         flex-direction: column;
         gap: 0;
+    }
+    
+    .datetime-select {
+        flex-direction: column;
+        gap: 10px;
     }
     
     .section-header {

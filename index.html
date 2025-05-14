@@ -51,16 +51,41 @@
                             <option value="B">会議室B</option>
                         </select>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="startDateTime"><i class="fas fa-clock"></i> 利用開始日時：</label>
-                            <input type="datetime-local" id="startDateTime" name="startDateTime" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="endDateTime"><i class="fas fa-clock"></i> 利用終了日時：</label>
-                            <input type="datetime-local" id="endDateTime" name="endDateTime" required>
+                    
+                    <!-- 開始日時の選択 -->
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> 利用開始日時：</label>
+                        <div class="datetime-select">
+                            <div class="date-select">
+                                <select id="startDateSelect" name="startDate" required>
+                                    <option value="">日付を選択</option>
+                                </select>
+                            </div>
+                            <div class="time-select">
+                                <select id="startTimeSelect" name="startTime" required>
+                                    <option value="">時間を選択</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
+                    
+                    <!-- 終了日時の選択 -->
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> 利用終了日時：</label>
+                        <div class="datetime-select">
+                            <div class="date-select">
+                                <select id="endDateSelect" name="endDate" required>
+                                    <option value="">日付を選択</option>
+                                </select>
+                            </div>
+                            <div class="time-select">
+                                <select id="endTimeSelect" name="endTime" required>
+                                    <option value="">時間を選択</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="reserverName"><i class="fas fa-user"></i> 予約者名：</label>
                         <input type="text" id="reserverName" name="reserverName" placeholder="例：山田太郎" required>
